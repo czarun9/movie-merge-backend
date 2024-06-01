@@ -70,7 +70,6 @@ public class UserService {
         UserEntity user = findOrThrow(id);
         UserEntity userParam = convertToEntity(userDto);
         user.setEmail(userParam.getEmail());
-        user.setMobileNumber(userParam.getMobileNumber());
 
         if (!password.isBlank()) {
             byte[] salt = createSalt();

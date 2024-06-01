@@ -16,6 +16,5 @@ import java.util.UUID;
 public class UserDto implements Serializable {
     private UUID id;
     private String email;
-    private String mobileNumber;
     private String password;
 }

@@ -22,12 +22,10 @@ public class UserEntity {
     @Column(unique = true)
     private String email;
 
-    private String mobileNumber;
     private byte[] storedHash;
     private byte[] storedSalt;
 
-    public UserEntity(String email, String mobileNumber) {
+    public UserEntity(String email) {
         this.email = email;
-        this.mobileNumber = mobileNumber;
     }
 }
