@@ -1,5 +1,7 @@
 package pl.wat.moviemergebackend.controller;
 
+import org.springframework.http.ResponseEntity;
+import pl.wat.moviemergebackend.exception.EmailAlreadyTakenException;
 import pl.wat.moviemergebackend.model.UserDto;
 import pl.wat.moviemergebackend.service.UserService;
 import jakarta.validation.Valid;
@@ -34,12 +36,17 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto postUser(@Valid @RequestBody UserDto userDto) throws NoSuchAlgorithmException, BadRequestException {
+    public UserDto postUser(@Valid @RequestBody UserDto userDto) throws NoSuchAlgorithmException {
         return userService.createUser(userDto, userDto.getPassword());
     }
 
     @PutMapping("/api/v1/users/{id}")
     public void putUser(@PathVariable("id") UUID id, @Valid @RequestBody UserDto userDto) throws NoSuchAlgorithmException {
         userService.updateUser(id, userDto, userDto.getPassword());
+    }
+
+    @ExceptionHandler(EmailAlreadyTakenException.class)
+    public ResponseEntity<String> handleEmailAlreadyTakenException(EmailAlreadyTakenException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 }

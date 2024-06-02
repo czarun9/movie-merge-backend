@@ -1,11 +1,11 @@
 package pl.wat.moviemergebackend.service;
 
+import pl.wat.moviemergebackend.exception.EmailAlreadyTakenException;
 import pl.wat.moviemergebackend.exception.NotFoundException;
 import pl.wat.moviemergebackend.model.UserDto;
 import pl.wat.moviemergebackend.entity.UserEntity;
 import pl.wat.moviemergebackend.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -46,14 +46,14 @@ public class UserService {
         return convertToDto(user);
     }
 
-    public UserDto createUser(UserDto userDto, String password) throws NoSuchAlgorithmException, BadRequestException {
-        var user = convertToEntity(userDto);
+    public UserDto createUser(UserDto userDto, String password) throws NoSuchAlgorithmException{
+        UserEntity user = convertToEntity(userDto);
         if (password.isBlank())
             throw new IllegalArgumentException("Password is required.");
 
-        var existsEmail = userRepository.selectExistsEmail(user.getEmail());
-        if (existsEmail) throw new BadRequestException(
-                "Email " + user.getEmail() + " taken");
+        boolean existsEmail = userRepository.selectExistsEmail(user.getEmail());
+        if (existsEmail) throw new EmailAlreadyTakenException(
+                "Email " + user.getEmail() + " jest zajęty.");
 
         byte[] salt = createSalt();
         byte[] hashedPassword = createPasswordHash(password, salt);
