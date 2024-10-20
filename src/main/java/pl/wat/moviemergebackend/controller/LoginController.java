@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-class AuthenticateController {
+class LoginController {
     private final JwtUtil jwtTokenUtil;
     private final ApplicationUserDetailsService userDetailsService;
 
-    @PostMapping(value = "/authenticate")
+    @PostMapping(value = "/login")
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthenticationResponse authenticate(@RequestBody AuthenticationRequest req) throws Exception {
+    public AuthenticationResponse login(@RequestBody AuthenticationRequest req) throws Exception {
         UserEntity user;
         try {
             user = userDetailsService.authenticate(req.getEmail(), req.getPassword());
