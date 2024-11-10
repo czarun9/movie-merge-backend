@@ -19,6 +19,9 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://jitpack.io"
+    }
 }
 
 dependencies {
@@ -37,7 +40,8 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "io.jsonwebtoken:jjwt-impl:0.11.2"
     implementation "io.jsonwebtoken:jjwt-jackson:0.11.2"
-    implementation 'org.modelmapper:modelmapper:3.2.0'
+    implementation "com.github.Omertron:api-themoviedb:themoviedbapi-4.3"
+    implementation "com.github.Omertron:api-omdb:API-OMDB-1.7"
 }
 
 tasks.named('test') {

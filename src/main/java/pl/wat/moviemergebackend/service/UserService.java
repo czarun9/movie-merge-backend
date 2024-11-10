@@ -6,7 +6,7 @@ import pl.wat.moviemergebackend.model.UserDto;
 import pl.wat.moviemergebackend.entity.UserEntity;
 import pl.wat.moviemergebackend.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
-    private final ModelMapper mapper;
+    private final ObjectMapper mapper;
     private final UserRepository userRepository;
 
     public UserEntity searchByEmail(String email) {
@@ -46,7 +46,7 @@ public class UserService {
         return convertToDto(user);
     }
 
-    public UserDto createUser(UserDto userDto, String password) throws NoSuchAlgorithmException{
+    public UserDto createUser(UserDto userDto, String password) throws NoSuchAlgorithmException {
         UserEntity user = convertToEntity(userDto);
         if (password.isBlank())
             throw new IllegalArgumentException("Password is required.");
@@ -64,7 +64,6 @@ public class UserService {
         userRepository.save(user);
         return convertToDto(user);
     }
-
 
     public void updateUser(UUID id, UserDto userDto, String password) throws NoSuchAlgorithmException {
         UserEntity user = findOrThrow(id);
@@ -86,7 +85,6 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-
     private byte[] createSalt() {
         var random = new SecureRandom();
         var salt = new byte[128];
@@ -101,11 +99,11 @@ public class UserService {
     }
 
     private UserDto convertToDto(UserEntity entity) {
-        return mapper.map(entity, UserDto.class);
+        return mapper.convertValue(entity, UserDto.class);
     }
 
     private UserEntity convertToEntity(UserDto dto) {
-        return mapper.map(dto, UserEntity.class);
+        return mapper.convertValue(dto, UserEntity.class);
     }
 
     private UserEntity findOrThrow(final UUID id) {
