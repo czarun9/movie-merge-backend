@@ -5,6 +5,7 @@ import com.omertron.themoviedbapi.MovieDbException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.wat.moviemergebackend.tmdb.model.TmdbMovie;
@@ -19,19 +20,21 @@ public class TmdbController {
 
     private final TmdbService tmdbService;
 
-    @GetMapping("/")
-    public String getTmdbMovie(){
+    @GetMapping("/{movieId}")
+    public ResponseEntity<TmdbMovie> getTmdbMovie(@PathVariable int movieId){
         try {
-            return tmdbService.getTmdbMovie();
+            TmdbMovie movie = tmdbService.getTmdbMovie(movieId);
+            return ResponseEntity.ok(movie);
         } catch (MovieDbException | JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
+
     @GetMapping("/discover")
-    public ResponseEntity<List<TmdbMovie>> getDiscoverTmdbMovies() {
+    public ResponseEntity<List<TmdbMovie>> getDiscoverTmdbMovies(int page) {
         try {
-            List<TmdbMovie> movies = tmdbService.getDiscoverTmdbMovies();
+            List<TmdbMovie> movies = tmdbService.getDiscoverTmdbMovies(page);
             return ResponseEntity.ok(movies);
         } catch (MovieDbException | JsonProcessingException e) {
             throw new RuntimeException(e);

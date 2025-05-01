@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.yamj.api.common.http.SimpleHttpClientBuilder;
 import pl.wat.moviemergebackend.tmdb.model.TmdbMovie;
+import pl.wat.moviemergebackend.tmdb.model.TmdbMovieInfo;
 
 import java.util.List;
 
@@ -35,14 +36,15 @@ public class TmdbService {
         this.theMovieDbApi = new TheMovieDbApi(TMDBKEY);
     }
 
-    public String getTmdbMovie() throws MovieDbException, JsonProcessingException {
-        MovieInfo movieInfo = tmdbMovies.getLatestMovie();
-        return objectMapper.writeValueAsString(movieInfo);
+    public TmdbMovie getTmdbMovie(int movieId) throws MovieDbException, JsonProcessingException {
+        MovieInfo movieInfo = tmdbMovies.getMovieInfo(movieId,"pl");
+        return objectMapper.convertValue(movieInfo, TmdbMovieInfo.class);
     }
 
-    public List<TmdbMovie> getDiscoverTmdbMovies() throws MovieDbException, JsonProcessingException {
+    public List<TmdbMovie> getDiscoverTmdbMovies(int page) throws MovieDbException, JsonProcessingException {
         List<MovieBasic> movies = theMovieDbApi.getDiscoverMovies(
                         new Discover()
+                                .page(page)
                                 .voteCountGte(300)
                                 .language("pl"))
                 .getResults();
