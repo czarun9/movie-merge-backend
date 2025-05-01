@@ -8,10 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.wat.moviemergebackend.tmdb.dto.TmdbMoviePageResponse;
 import pl.wat.moviemergebackend.tmdb.model.TmdbMovie;
 import pl.wat.moviemergebackend.tmdb.service.TmdbService;
-
-import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -32,10 +31,10 @@ public class TmdbController {
 
 
     @GetMapping("/discover")
-    public ResponseEntity<List<TmdbMovie>> getDiscoverTmdbMovies(int page) {
+    public ResponseEntity<TmdbMoviePageResponse> getDiscoverTmdbMovies(int page) {
         try {
-            List<TmdbMovie> movies = tmdbService.getDiscoverTmdbMovies(page);
-            return ResponseEntity.ok(movies);
+            TmdbMoviePageResponse response = tmdbService.getDiscoverTmdbMovies(page);
+            return ResponseEntity.ok(response);
         } catch (MovieDbException | JsonProcessingException e) {
             throw new RuntimeException(e);
         }

@@ -8,6 +8,7 @@ import com.omertron.themoviedbapi.methods.TmdbMovies;
 import com.omertron.themoviedbapi.model.discover.Discover;
 import com.omertron.themoviedbapi.model.movie.MovieBasic;
 import com.omertron.themoviedbapi.model.movie.MovieInfo;
+import com.omertron.themoviedbapi.results.ResultList;
 import com.omertron.themoviedbapi.tools.HttpTools;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpClient;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.yamj.api.common.http.SimpleHttpClientBuilder;
+import pl.wat.moviemergebackend.tmdb.dto.TmdbMoviePageResponse;
 import pl.wat.moviemergebackend.tmdb.model.TmdbMovie;
 import pl.wat.moviemergebackend.tmdb.model.TmdbMovieInfo;
 
@@ -37,17 +39,23 @@ public class TmdbService {
     }
 
     public TmdbMovie getTmdbMovie(int movieId) throws MovieDbException, JsonProcessingException {
-        MovieInfo movieInfo = tmdbMovies.getMovieInfo(movieId,"pl");
+        MovieInfo movieInfo = tmdbMovies.getMovieInfo(movieId, "pl");
         return objectMapper.convertValue(movieInfo, TmdbMovieInfo.class);
     }
 
-    public List<TmdbMovie> getDiscoverTmdbMovies(int page) throws MovieDbException, JsonProcessingException {
-        List<MovieBasic> movies = theMovieDbApi.getDiscoverMovies(
-                        new Discover()
-                                .page(page)
-                                .voteCountGte(300)
-                                .language("pl"))
-                .getResults();
-        return objectMapper.convertValue(movies, objectMapper.getTypeFactory().constructCollectionType(List.class, TmdbMovie.class));
+    public TmdbMoviePageResponse getDiscoverTmdbMovies(int page) throws MovieDbException, JsonProcessingException {
+        ResultList<MovieBasic> resultList = theMovieDbApi.getDiscoverMovies(
+                new Discover()
+                        .page(page)
+                        .voteCountGte(300)
+                        .language("pl"));
+
+        List<MovieBasic> movies = resultList.getResults();
+        int totalPages = resultList.getTotalPages();
+        List<TmdbMovie> convertedMovies = objectMapper.convertValue(
+                movies,
+                objectMapper.getTypeFactory().constructCollectionType(List.class, TmdbMovie.class)
+        );
+        return new TmdbMoviePageResponse(convertedMovies, totalPages);
     }
 }
