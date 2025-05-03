@@ -1,16 +1,18 @@
 package pl.wat.moviemergebackend.tmdb.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.omertron.themoviedbapi.model.Genre;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TmdbMovie {
+public class TmdbMovie implements Serializable {
 
     private int id;
 
@@ -46,8 +48,8 @@ public class TmdbMovie {
     private boolean video;
     private double rating;
 
-    @JsonProperty("genre_ids")
-    private List<Integer> genreIds;
+    @JsonProperty("genres")
+    private List<Genre> genres;
 
     @JsonProperty("original_language")
     private String originalLanguage;

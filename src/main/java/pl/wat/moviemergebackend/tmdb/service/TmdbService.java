@@ -21,6 +21,7 @@ import pl.wat.moviemergebackend.tmdb.dto.GenresResponse;
 import pl.wat.moviemergebackend.tmdb.dto.TmdbMoviePageResponse;
 import pl.wat.moviemergebackend.tmdb.model.DiscoverSearchFilters;
 import pl.wat.moviemergebackend.tmdb.model.TmdbMovie;
+import pl.wat.moviemergebackend.tmdb.model.TmdbMovieDiscover;
 import pl.wat.moviemergebackend.tmdb.model.TmdbMovieInfo;
 
 import java.util.List;
@@ -65,7 +66,7 @@ public class TmdbService {
         List<TmdbMovie> convertedMovies = objectMapper.convertValue(
                 movies,
                 objectMapper.getTypeFactory()
-                        .constructCollectionType(List.class, TmdbMovie.class)
+                        .constructCollectionType(List.class, TmdbMovieDiscover.class)
         );
 
         return new TmdbMoviePageResponse(convertedMovies, totalPages);
