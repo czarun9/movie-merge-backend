@@ -4,11 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.omertron.themoviedbapi.MovieDbException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import pl.wat.moviemergebackend.tmdb.dto.GenresResponse;
 import pl.wat.moviemergebackend.tmdb.dto.TmdbMoviePageResponse;
+import pl.wat.moviemergebackend.tmdb.model.DiscoverSearchFilters;
 import pl.wat.moviemergebackend.tmdb.model.TmdbMovie;
 import pl.wat.moviemergebackend.tmdb.service.TmdbService;
 
@@ -19,7 +18,7 @@ public class TmdbController {
 
     private final TmdbService tmdbService;
 
-    @GetMapping("/{movieId}")
+    @GetMapping("/movies/{movieId}")
     public ResponseEntity<TmdbMovie> getTmdbMovie(@PathVariable int movieId){
         try {
             TmdbMovie movie = tmdbService.getTmdbMovie(movieId);
@@ -31,11 +30,22 @@ public class TmdbController {
 
 
     @GetMapping("/discover")
-    public ResponseEntity<TmdbMoviePageResponse> getDiscoverTmdbMovies(int page) {
+    public ResponseEntity<TmdbMoviePageResponse> getDiscoverTmdbMovies(DiscoverSearchFilters filters) {
         try {
-            TmdbMoviePageResponse response = tmdbService.getDiscoverTmdbMovies(page);
+            TmdbMoviePageResponse response = tmdbService.getDiscoverTmdbMovies(filters);
             return ResponseEntity.ok(response);
         } catch (MovieDbException | JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @GetMapping("/genres")
+    public ResponseEntity<GenresResponse> getGenres() {
+        try {
+            GenresResponse response = tmdbService.getGenres();
+            return ResponseEntity.ok(response);
+        } catch (MovieDbException e) {
             throw new RuntimeException(e);
         }
     }
