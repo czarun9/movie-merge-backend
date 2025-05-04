@@ -1,7 +1,7 @@
 package pl.wat.moviemergebackend.controller;
 
-import pl.wat.moviemergebackend.model.AuthenticationRequest;
-import pl.wat.moviemergebackend.model.AuthenticationResponse;
+import pl.wat.moviemergebackend.security.AuthenticationRequest;
+import pl.wat.moviemergebackend.security.AuthenticationResponse;
 import pl.wat.moviemergebackend.service.ApplicationUserDetailsService;
 import pl.wat.moviemergebackend.util.JwtUtil;
 import pl.wat.moviemergebackend.entity.UserEntity;

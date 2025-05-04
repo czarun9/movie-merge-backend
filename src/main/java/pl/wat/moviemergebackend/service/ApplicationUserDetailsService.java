@@ -1,6 +1,6 @@
 package pl.wat.moviemergebackend.service;
 
-import pl.wat.moviemergebackend.model.UserPrincipal;
+import pl.wat.moviemergebackend.security.UserPrincipal;
 import pl.wat.moviemergebackend.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;

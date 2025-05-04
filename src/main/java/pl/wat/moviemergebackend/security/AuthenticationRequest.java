@@ -1,4 +1,4 @@
-package pl.wat.moviemergebackend.model;
+package pl.wat.moviemergebackend.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

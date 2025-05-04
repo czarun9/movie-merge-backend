@@ -2,7 +2,7 @@ package pl.wat.moviemergebackend.service;
 
 import pl.wat.moviemergebackend.exception.EmailAlreadyTakenException;
 import pl.wat.moviemergebackend.exception.NotFoundException;
-import pl.wat.moviemergebackend.model.UserDto;
+import pl.wat.moviemergebackend.api.dto.UserDto;
 import pl.wat.moviemergebackend.entity.UserEntity;
 import pl.wat.moviemergebackend.repository.UserRepository;
 import lombok.AllArgsConstructor;

@@ -2,11 +2,10 @@ package pl.wat.moviemergebackend.controller;
 
 import org.springframework.http.ResponseEntity;
 import pl.wat.moviemergebackend.exception.EmailAlreadyTakenException;
-import pl.wat.moviemergebackend.model.UserDto;
+import pl.wat.moviemergebackend.api.dto.UserDto;
 import pl.wat.moviemergebackend.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
