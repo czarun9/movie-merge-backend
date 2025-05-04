@@ -42,6 +42,7 @@ dependencies {
     implementation "io.jsonwebtoken:jjwt-jackson:0.11.2"
     implementation "com.github.Omertron:api-themoviedb:themoviedbapi-4.3"
     implementation "com.github.Omertron:api-omdb:API-OMDB-1.7"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
 }
 
 tasks.named('test') {
