@@ -13,6 +13,7 @@ import java.util.List;
 public class MovieStatusDto {
     private boolean watched;
     private boolean inWatchlist;
+    private boolean favourite;
     private List<RatingDto> ratings;
     private BigDecimal latestRating;
 
