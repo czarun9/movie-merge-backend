@@ -10,9 +10,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "watchlist_entry",
+@Table(name = "watchlist_status",
         uniqueConstraints = @UniqueConstraint(columnNames = {"user_id","movie_tmdb_id"}))
-public class WatchlistEntry {
+public class MovieWatchlistStatusEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
     private UUID id;
