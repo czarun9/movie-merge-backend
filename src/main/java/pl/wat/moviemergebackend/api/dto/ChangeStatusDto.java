@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FavouriteDto {
-    private boolean favourite;
+public class ChangeStatusDto {
+    private boolean status;
 }
 

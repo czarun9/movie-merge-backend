@@ -1,10 +1,14 @@
 package pl.wat.moviemergebackend.service;
 
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.wat.moviemergebackend.api.dto.MovieStatusDto;
 import pl.wat.moviemergebackend.entity.FavouriteMovieEntity;
+import pl.wat.moviemergebackend.entity.UserEntity;
+import pl.wat.moviemergebackend.entity.WatchedMovie;
+import pl.wat.moviemergebackend.entity.WatchlistEntry;
 import pl.wat.moviemergebackend.repository.FavouriteRepository;
 import pl.wat.moviemergebackend.repository.MovieRatingRepository;
 import pl.wat.moviemergebackend.repository.WatchedMovieRepository;
@@ -25,13 +29,15 @@ public class MovieStatusService {
     private final WatchlistEntryRepository watchlistRepo;
     private final MovieRatingRepository ratingRepo;
     private final FavouriteRepository favouriteRepo;
+    private final EntityManager entityManager;
 
     public MovieStatusDto getMovieStatus(UUID userId, Integer tmdbId) {
-        boolean watched = watchedRepo.existsByUserIdAndMovieTmdbId(userId, tmdbId);
-        boolean inWatchlist = watchlistRepo.existsByUserIdAndMovieTmdbId(userId, tmdbId);
-        boolean favourite = favouriteRepo.existsByUserIdAndMovieTmdbId(userId, tmdbId);
+        UserEntity user = entityManager.getReference(UserEntity.class, userId);
+        boolean watched = watchedRepo.existsByUserAndMovieTmdbId(user, tmdbId);
+        boolean inWatchlist = watchlistRepo.existsByUserAndMovieTmdbId(user, tmdbId);
+        boolean favourite = favouriteRepo.existsByUserAndMovieTmdbId(user, tmdbId);
 
-        List<RatingDto> ratings = ratingRepo.findByUserIdAndMovieTmdbId(userId, tmdbId)
+        List<RatingDto> ratings = ratingRepo.findByUserIdAndMovieTmdbId(user.getId(), tmdbId)
                 .stream()
                 .map(r -> {
                     RatingDto dto = new RatingDto();
@@ -56,15 +62,46 @@ public class MovieStatusService {
 
     @Transactional
     public void setFavoriteStatus(UUID userId, Integer tmdbId, boolean isFavourite) {
+        UserEntity user = entityManager.getReference(UserEntity.class, userId);
         if (isFavourite) {
-            if (!favouriteRepo.existsByUserIdAndMovieTmdbId(userId, tmdbId)) {
+            if (!favouriteRepo.existsByUserAndMovieTmdbId(user, tmdbId)) {
                 FavouriteMovieEntity entity = new FavouriteMovieEntity();
-                entity.setUserId(userId);
+                entity.setUser(user);
                 entity.setMovieTmdbId(tmdbId);
                 favouriteRepo.save(entity);
             }
         } else {
-            favouriteRepo.deleteByUserIdAndMovieTmdbId(userId, tmdbId);
+            favouriteRepo.deleteByUserAndMovieTmdbId(user, tmdbId);
+        }
+    }
+
+    @Transactional
+    public void setWatchedStatus(UUID userId, Integer tmdbId, boolean isWatched) {
+        UserEntity user = entityManager.getReference(UserEntity.class, userId);
+        if (isWatched) {
+            if (!watchedRepo.existsByUserAndMovieTmdbId(user, tmdbId)) {
+                WatchedMovie entity = new WatchedMovie();
+                entity.setUser(user);
+                entity.setMovieTmdbId(tmdbId);
+                watchedRepo.save(entity);
+            }
+        } else {
+            watchedRepo.deleteByUserAndMovieTmdbId(user, tmdbId);
+        }
+    }
+
+    @Transactional
+    public void setAddedToWatchlistStatus(UUID userId, Integer tmdbId, boolean isAddedToWatchlist) {
+        UserEntity user = entityManager.getReference(UserEntity.class, userId);
+        if (isAddedToWatchlist) {
+            if (!watchlistRepo.existsByUserAndMovieTmdbId(user, tmdbId)) {
+                WatchlistEntry entity = new WatchlistEntry();
+                entity.setUser(user);
+                entity.setMovieTmdbId(tmdbId);
+                watchlistRepo.save(entity);
+            }
+        } else {
+            watchlistRepo.deleteByUserAndMovieTmdbId(user, tmdbId);
         }
     }
 

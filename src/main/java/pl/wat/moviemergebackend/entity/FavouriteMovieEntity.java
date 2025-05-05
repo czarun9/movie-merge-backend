@@ -18,10 +18,11 @@ public class FavouriteMovieEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
-    private Long id;
+    private UUID id;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
     @Column(name = "movie_tmdb_id", nullable = false)
     private Integer movieTmdbId;
