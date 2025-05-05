@@ -4,15 +4,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@MappedSuperclass
 @Getter
 @Setter
-@Entity
-@Table(name = "movie_rating")
-public class MovieRating {
+public abstract class BaseMovieStatusEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
     private UUID id;
@@ -24,9 +23,6 @@ public class MovieRating {
     @Column(name = "movie_tmdb_id", nullable = false)
     private Integer movieTmdbId;
 
-    @Column(name = "rating_value", nullable = false, precision = 2, scale = 1)
-    private BigDecimal ratingValue;
-
-    @Column(name = "rated_at", nullable = false)
-    private LocalDateTime ratedAt = LocalDateTime.now();
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

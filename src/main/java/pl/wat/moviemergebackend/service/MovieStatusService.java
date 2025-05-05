@@ -5,10 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.wat.moviemergebackend.api.dto.MovieStatusDto;
-import pl.wat.moviemergebackend.entity.FavouriteMovieEntity;
-import pl.wat.moviemergebackend.entity.UserEntity;
-import pl.wat.moviemergebackend.entity.WatchedMovie;
-import pl.wat.moviemergebackend.entity.WatchlistEntry;
+import pl.wat.moviemergebackend.entity.*;
 import pl.wat.moviemergebackend.repository.FavouriteRepository;
 import pl.wat.moviemergebackend.repository.MovieRatingRepository;
 import pl.wat.moviemergebackend.repository.WatchedMovieRepository;
@@ -42,7 +39,7 @@ public class MovieStatusService {
                 .map(r -> {
                     RatingDto dto = new RatingDto();
                     dto.setValue(r.getRatingValue());
-                    dto.setRatedAt(r.getRatedAt());
+                    dto.setRatedAt(r.getCreatedAt());
                     return dto;
                 })
                 .sorted(Comparator.comparing(RatingDto::getRatedAt))
@@ -65,7 +62,7 @@ public class MovieStatusService {
         UserEntity user = entityManager.getReference(UserEntity.class, userId);
         if (isFavourite) {
             if (!favouriteRepo.existsByUserAndMovieTmdbId(user, tmdbId)) {
-                FavouriteMovieEntity entity = new FavouriteMovieEntity();
+                MovieFavouriteStatusEntity entity = new MovieFavouriteStatusEntity();
                 entity.setUser(user);
                 entity.setMovieTmdbId(tmdbId);
                 favouriteRepo.save(entity);
@@ -80,7 +77,7 @@ public class MovieStatusService {
         UserEntity user = entityManager.getReference(UserEntity.class, userId);
         if (isWatched) {
             if (!watchedRepo.existsByUserAndMovieTmdbId(user, tmdbId)) {
-                WatchedMovie entity = new WatchedMovie();
+                MovieWatchedStatusEntity entity = new MovieWatchedStatusEntity();
                 entity.setUser(user);
                 entity.setMovieTmdbId(tmdbId);
                 watchedRepo.save(entity);
@@ -95,7 +92,7 @@ public class MovieStatusService {
         UserEntity user = entityManager.getReference(UserEntity.class, userId);
         if (isAddedToWatchlist) {
             if (!watchlistRepo.existsByUserAndMovieTmdbId(user, tmdbId)) {
-                WatchlistEntry entity = new WatchlistEntry();
+                MovieWatchlistStatusEntity entity = new MovieWatchlistStatusEntity();
                 entity.setUser(user);
                 entity.setMovieTmdbId(tmdbId);
                 watchlistRepo.save(entity);
