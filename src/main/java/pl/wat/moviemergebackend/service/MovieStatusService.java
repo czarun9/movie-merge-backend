@@ -5,14 +5,15 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.wat.moviemergebackend.api.dto.MovieStatusDto;
+import pl.wat.moviemergebackend.api.dto.RatingDto;
 import pl.wat.moviemergebackend.entity.*;
 import pl.wat.moviemergebackend.repository.FavouriteRepository;
 import pl.wat.moviemergebackend.repository.MovieRatingRepository;
 import pl.wat.moviemergebackend.repository.WatchedMovieRepository;
 import pl.wat.moviemergebackend.repository.WatchlistEntryRepository;
-import pl.wat.moviemergebackend.api.dto.MovieStatusDto.RatingDto;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -101,5 +102,21 @@ public class MovieStatusService {
             watchlistRepo.deleteByUserAndMovieTmdbId(user, tmdbId);
         }
     }
+
+    @Transactional
+    public void setRating(UUID userId, Integer tmdbId, BigDecimal rating) {
+        UserEntity user = entityManager.getReference(UserEntity.class, userId);
+
+        MovieRatingStatusEntity ratingEntity = new MovieRatingStatusEntity();
+        ratingEntity.setUser(user);
+        ratingEntity.setMovieTmdbId(tmdbId);
+        ratingEntity.setRatingValue(rating);
+        ratingEntity.setCreatedAt(LocalDateTime.now());
+
+        ratingRepo.save(ratingEntity);
+    }
+
+
+
 
 }

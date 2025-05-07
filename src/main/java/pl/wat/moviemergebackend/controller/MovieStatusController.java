@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import pl.wat.moviemergebackend.api.dto.ChangeStatusDto;
+import pl.wat.moviemergebackend.api.dto.RatingDto;
 import pl.wat.moviemergebackend.security.UserPrincipal;
 import pl.wat.moviemergebackend.api.dto.MovieStatusDto;
 import pl.wat.moviemergebackend.service.MovieStatusService;
@@ -65,4 +66,16 @@ public class MovieStatusController {
         statusSetter.accept(userId, tmdbId, status);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{tmdbId}/rating")
+    public ResponseEntity<Void> setRating(
+            @PathVariable Integer tmdbId,
+            @RequestBody RatingDto request,
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        UUID userId = principal.getId();
+        movieStatusService.setRating(userId, tmdbId, request.getValue());
+        return ResponseEntity.ok().build();
+    }
+
 }
