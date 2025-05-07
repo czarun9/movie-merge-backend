@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -16,12 +15,4 @@ public class MovieStatusDto {
     private boolean favourite;
     private List<RatingDto> ratings;
     private BigDecimal latestRating;
-
-
-    @Getter
-    @Setter
-    public static class RatingDto {
-        private BigDecimal value;
-        private LocalDateTime ratedAt;
-    }
 }
