@@ -9,6 +9,7 @@ import com.omertron.themoviedbapi.model.Genre;
 import com.omertron.themoviedbapi.model.discover.Discover;
 import com.omertron.themoviedbapi.model.movie.MovieBasic;
 import com.omertron.themoviedbapi.model.movie.MovieInfo;
+import com.omertron.themoviedbapi.model.review.Review;
 import com.omertron.themoviedbapi.results.ResultList;
 import com.omertron.themoviedbapi.tools.HttpTools;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +18,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.yamj.api.common.http.SimpleHttpClientBuilder;
+import pl.wat.moviemergebackend.api.dto.ReviewDto;
 import pl.wat.moviemergebackend.tmdb.dto.GenresResponse;
 import pl.wat.moviemergebackend.tmdb.dto.TmdbMoviePageResponse;
-import pl.wat.moviemergebackend.tmdb.model.DiscoverSearchFilters;
-import pl.wat.moviemergebackend.tmdb.model.TmdbMovie;
-import pl.wat.moviemergebackend.tmdb.model.TmdbMovieDiscover;
-import pl.wat.moviemergebackend.tmdb.model.TmdbMovieInfo;
+import pl.wat.moviemergebackend.tmdb.model.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -82,5 +82,27 @@ public class TmdbService {
         ResultList<Genre> resultList = theMovieDbApi.getGenreMovieList("pl");
         return new GenresResponse(resultList.getResults());
     }
+
+    public TmdbMovieReviewDto getTmdbMovieReviews(int movieId) throws MovieDbException {
+        ResultList<Review> resultList = tmdbMovies.getMovieReviews(movieId, 1, "en");
+
+        List<ReviewDto> reviews = resultList.getResults().stream().map(review -> {
+            ReviewDto dto = new ReviewDto();
+            dto.setAuthor(review.getAuthor());
+            dto.setContent(review.getContent());
+            dto.setUrl(review.getUrl());
+            dto.setPlatform("tmdb");
+            return dto;
+        }).collect(Collectors.toList());
+
+        TmdbMovieReviewDto dto = new TmdbMovieReviewDto();
+        dto.setPage(resultList.getPage());
+        dto.setTotalPages(resultList.getTotalPages());
+        dto.setTotalResults(resultList.getTotalResults());
+        dto.setReviews(reviews);
+
+        return dto;
+    }
+
 
 }

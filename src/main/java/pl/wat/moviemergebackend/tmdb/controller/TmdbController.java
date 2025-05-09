@@ -2,6 +2,7 @@ package pl.wat.moviemergebackend.tmdb.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.omertron.themoviedbapi.MovieDbException;
+import com.omertron.themoviedbapi.methods.TmdbReviews;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import pl.wat.moviemergebackend.tmdb.dto.GenresResponse;
 import pl.wat.moviemergebackend.tmdb.dto.TmdbMoviePageResponse;
 import pl.wat.moviemergebackend.tmdb.model.DiscoverSearchFilters;
 import pl.wat.moviemergebackend.tmdb.model.TmdbMovie;
+import pl.wat.moviemergebackend.tmdb.model.TmdbMovieReviewDto;
 import pl.wat.moviemergebackend.tmdb.service.TmdbService;
 
 @AllArgsConstructor
@@ -44,6 +46,16 @@ public class TmdbController {
     public ResponseEntity<GenresResponse> getGenres() {
         try {
             GenresResponse response = tmdbService.getGenres();
+            return ResponseEntity.ok(response);
+        } catch (MovieDbException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/movies/{movieId}/reviews")
+    public ResponseEntity<TmdbMovieReviewDto> getTmdbMovieReviews(@PathVariable int movieId){
+        try {
+            TmdbMovieReviewDto response = tmdbService.getTmdbMovieReviews(movieId);
             return ResponseEntity.ok(response);
         } catch (MovieDbException e) {
             throw new RuntimeException(e);
