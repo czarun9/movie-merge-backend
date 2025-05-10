@@ -47,6 +47,7 @@ public class TmdbMovie implements Serializable {
     private String title;
     private boolean video;
     private double rating;
+    private int runtime;
 
     @JsonProperty("genres")
     private List<Genre> genres;
