@@ -13,6 +13,6 @@ import java.util.UUID;
 @Repository
 public interface MovieRatingRepository extends JpaRepository<MovieRatingStatusEntity, UUID> {
     List<MovieRatingStatusEntity> findByUserIdAndMovieTmdbId(UUID userId, Integer movieTmdbId);
-    Page<MovieRatingStatusEntity> findByUserId(UUID user_id, Pageable pageable);
-    void deleteByUserIdAndMovieTmdbId(UUID userId, Integer id);
+    Page<MovieRatingStatusEntity> findByUserIdOrderByCreatedAtDesc(UUID user_id, Pageable pageable);
+    void deleteByUserIdAndId(UUID user_id, UUID id);
 }

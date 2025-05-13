@@ -13,6 +13,7 @@ import java.util.UUID;
 public interface WatchedMovieRepository extends JpaRepository<MovieWatchedStatusEntity, UUID> {
     boolean existsByUserAndMovieTmdbId(UserEntity user, Integer movieTmdbId);
     void deleteByUserAndMovieTmdbId(UserEntity user, Integer movieTmdbId);
-    Page<MovieWatchedStatusEntity> findByUserId(UUID user_id, Pageable pageable);
+    Page<MovieWatchedStatusEntity> findByUserIdOrderByCreatedAtDesc(UUID user_id, Pageable pageable);
+    void deleteByUserIdAndId(UUID user_id, UUID id);
 
 }

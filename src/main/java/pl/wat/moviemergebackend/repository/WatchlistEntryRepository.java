@@ -15,6 +15,6 @@ import java.util.UUID;
 public interface WatchlistEntryRepository extends JpaRepository<MovieWatchlistStatusEntity, UUID> {
     boolean existsByUserAndMovieTmdbId(UserEntity user, Integer movieTmdbId);
     void deleteByUserAndMovieTmdbId(UserEntity user, Integer movieTmdbId);
-    void deleteByUserIdAndMovieTmdbId(UUID userId, Integer id);
-    Page<MovieWatchlistStatusEntity> findByUserId(UUID user_id, Pageable pageable);
+    void deleteByUserIdAndId(UUID user_id, UUID id);
+    Page<MovieWatchlistStatusEntity> findByUserIdOrderByCreatedAtDesc(UUID user_id, Pageable pageable);
 }

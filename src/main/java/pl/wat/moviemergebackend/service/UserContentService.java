@@ -1,5 +1,6 @@
 package pl.wat.moviemergebackend.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +34,7 @@ public class UserContentService {
         return getUserList(
                 userId,
                 pageable,
-                favouriteRepository::findByUserId,
+                favouriteRepository::findByUserIdOrderByCreatedAtDesc,
                 MovieFavouriteStatusEntity::getId,
                 MovieFavouriteStatusEntity::getCreatedAt,
                 MovieFavouriteStatusEntity::getMovieTmdbId
@@ -44,7 +45,7 @@ public class UserContentService {
         return getUserList(
                 userId,
                 pageable,
-                watchlistEntryRepository::findByUserId,
+                watchlistEntryRepository::findByUserIdOrderByCreatedAtDesc,
                 MovieWatchlistStatusEntity::getId,
                 MovieWatchlistStatusEntity::getCreatedAt,
                 MovieWatchlistStatusEntity::getMovieTmdbId
@@ -55,7 +56,7 @@ public class UserContentService {
         return getUserList(
                 userId,
                 pageable,
-                watchedMovieRepository::findByUserId,
+                watchedMovieRepository::findByUserIdOrderByCreatedAtDesc,
                 MovieWatchedStatusEntity::getId,
                 MovieWatchedStatusEntity::getCreatedAt,
                 MovieWatchedStatusEntity::getMovieTmdbId
@@ -66,7 +67,7 @@ public class UserContentService {
         return getUserList(
                 userId,
                 pageable,
-                ratingRepository::findByUserId,
+                ratingRepository::findByUserIdOrderByCreatedAtDesc,
                 MovieRatingStatusEntity::getId,
                 MovieRatingStatusEntity::getCreatedAt,
                 MovieRatingStatusEntity::getMovieTmdbId,
@@ -124,11 +125,13 @@ public class UserContentService {
     }
 
 
-    public void removeItem(UUID userId, String section, Integer id) {
+    @Transactional
+    public void removeItem(UUID userId, String section, UUID id) {
         switch (section.toLowerCase()) {
-            case "favorites" -> favouriteRepository.deleteByUserIdAndMovieTmdbId(userId, id);
-            case "watchlist" -> watchlistEntryRepository.deleteByUserIdAndMovieTmdbId(userId, id);
-            case "ratings" -> ratingRepository.deleteByUserIdAndMovieTmdbId(userId, id);
+            case "favorites" -> favouriteRepository.deleteByUserIdAndId(userId, id);
+            case "watchlist" -> watchlistEntryRepository.deleteByUserIdAndId(userId, id);
+            case "watched" -> watchedMovieRepository.deleteByUserIdAndId(userId, id);
+            case "ratings" -> ratingRepository.deleteByUserIdAndId(userId, id);
             default -> throw new IllegalArgumentException("Nieznana sekcja: " + section);
         }
     }

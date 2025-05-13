@@ -62,7 +62,7 @@ public class UserContentController {
     @DeleteMapping("/{section}/{itemId}")
     public void removeItemFromSection(
             @PathVariable String section,
-            @PathVariable Integer itemId,
+            @PathVariable UUID itemId,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         UUID userId = principal.getId();
