@@ -48,15 +48,16 @@ public class UserContentController {
         return userContentService.getUserRatings(userId, PageRequest.of(page, size));
     }
 
-//    @GetMapping("/reviews")
-//    public Page<ListItemDto> getReviews(
-//            @AuthenticationPrincipal UserPrincipal principal,
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size
-//    ) {
-//        UUID userId = principal.getId();
-//        return userContentService.getUserReviews(userId, PageRequest.of(page, size));
-//    }
+    @GetMapping("/watched")
+    public Page<ListItemDto> getWatched(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        UUID userId = principal.getId();
+        return userContentService.getUserWatched(userId, PageRequest.of(page, size));
+    }
+
 
     @DeleteMapping("/{section}/{itemId}")
     public void removeItemFromSection(

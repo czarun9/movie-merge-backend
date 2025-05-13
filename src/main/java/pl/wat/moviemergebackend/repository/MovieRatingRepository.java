@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import pl.wat.moviemergebackend.entity.MovieRatingStatusEntity;
+import pl.wat.moviemergebackend.entity.MovieWatchlistStatusEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +13,6 @@ import java.util.UUID;
 @Repository
 public interface MovieRatingRepository extends JpaRepository<MovieRatingStatusEntity, UUID> {
     List<MovieRatingStatusEntity> findByUserIdAndMovieTmdbId(UUID userId, Integer movieTmdbId);
-    Page<MovieRatingStatusEntity> findAllByUserId(UUID userId, Pageable pageable);
+    Page<MovieRatingStatusEntity> findByUserId(UUID user_id, Pageable pageable);
     void deleteByUserIdAndMovieTmdbId(UUID userId, Integer id);
 }

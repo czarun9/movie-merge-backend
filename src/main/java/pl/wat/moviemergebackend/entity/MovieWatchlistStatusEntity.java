@@ -4,26 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "watchlist_status",
         uniqueConstraints = @UniqueConstraint(columnNames = {"user_id","movie_tmdb_id"}))
-public class MovieWatchlistStatusEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
-    private UUID id;
+public class MovieWatchlistStatusEntity extends BaseMovieStatusEntity {
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
-
-    @Column(name = "movie_tmdb_id", nullable = false)
-    private Integer movieTmdbId;
-
-    @Column(name = "added_at", nullable = false)
-    private LocalDateTime addedAt = LocalDateTime.now();
 }

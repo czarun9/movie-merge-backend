@@ -44,7 +44,7 @@ public class TmdbService {
 
     public TmdbMovie getTmdbMovie(int movieId) throws MovieDbException, JsonProcessingException {
         MovieInfo movieInfo = tmdbMovies.getMovieInfo(movieId, "pl");
-        return objectMapper.convertValue(movieInfo, TmdbMovieInfo.class);
+        return objectMapper.convertValue(movieInfo, TmdbMovie.class);
     }
 
     public TmdbMoviePageResponse getDiscoverTmdbMovies(DiscoverSearchFilters filters) throws MovieDbException, JsonProcessingException {

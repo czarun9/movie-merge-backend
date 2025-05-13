@@ -14,4 +14,6 @@ public interface FavouriteRepository extends JpaRepository<MovieFavouriteStatusE
     Page<MovieFavouriteStatusEntity> findAllByUserId(UUID userId, Pageable pageable);
 
     void deleteByUserIdAndMovieTmdbId(UUID user_id, Integer movieTmdbId);
+
+    Page<MovieFavouriteStatusEntity> findByUserId(UUID user_id, Pageable pageable);
 }

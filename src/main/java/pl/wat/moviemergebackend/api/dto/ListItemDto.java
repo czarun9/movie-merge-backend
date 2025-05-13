@@ -1,20 +1,21 @@
 package pl.wat.moviemergebackend.api.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ListItemDto {
     private Integer movieTmdbId;
     private String title;
-    private LocalDateTime createdAt;
-    private BigDecimal rating;
+    private String releaseDate;
     private String posterUrl;
-    private String content;
-    private String author;
+    private BigDecimal rating;
+    private LocalDateTime createdAt;
 }
 
