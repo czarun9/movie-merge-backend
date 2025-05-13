@@ -34,8 +34,9 @@ public class UserContentService {
                 userId,
                 pageable,
                 favouriteRepository::findByUserId,
-                MovieFavouriteStatusEntity::getMovieTmdbId,
-                MovieFavouriteStatusEntity::getCreatedAt
+                MovieFavouriteStatusEntity::getId,
+                MovieFavouriteStatusEntity::getCreatedAt,
+                MovieFavouriteStatusEntity::getMovieTmdbId
         );
     }
 
@@ -44,8 +45,9 @@ public class UserContentService {
                 userId,
                 pageable,
                 watchlistEntryRepository::findByUserId,
-                MovieWatchlistStatusEntity::getMovieTmdbId,
-                MovieWatchlistStatusEntity::getCreatedAt
+                MovieWatchlistStatusEntity::getId,
+                MovieWatchlistStatusEntity::getCreatedAt,
+                MovieWatchlistStatusEntity::getMovieTmdbId
         );
     }
 
@@ -54,8 +56,9 @@ public class UserContentService {
                 userId,
                 pageable,
                 watchedMovieRepository::findByUserId,
-                MovieWatchedStatusEntity::getMovieTmdbId,
-                MovieWatchedStatusEntity::getCreatedAt
+                MovieWatchedStatusEntity::getId,
+                MovieWatchedStatusEntity::getCreatedAt,
+                MovieWatchedStatusEntity::getMovieTmdbId
         );
     }
 
@@ -64,8 +67,9 @@ public class UserContentService {
                 userId,
                 pageable,
                 ratingRepository::findByUserId,
-                MovieRatingStatusEntity::getMovieTmdbId,
+                MovieRatingStatusEntity::getId,
                 MovieRatingStatusEntity::getCreatedAt,
+                MovieRatingStatusEntity::getMovieTmdbId,
                 MovieRatingStatusEntity::getRatingValue
         );
     }
@@ -75,10 +79,11 @@ public class UserContentService {
             UUID userId,
             Pageable pageable,
             BiFunction<UUID, Pageable, Page<T>> fetchPageFn,
-            Function<T, Integer> extractTmdbIdFn,
-            Function<T, LocalDateTime> extractCreatedAtFn
-    ) {
-        return getUserList(userId, pageable, fetchPageFn, extractTmdbIdFn, extractCreatedAtFn, null);
+            Function<T, UUID> extractIdFn,
+            Function<T, LocalDateTime> extractCreatedAtFn,
+            Function<T, Integer> extractTmdbIdFn
+            ) {
+        return getUserList(userId, pageable, fetchPageFn, extractIdFn, extractCreatedAtFn, extractTmdbIdFn, null);
     }
 
 
@@ -86,14 +91,16 @@ public class UserContentService {
             UUID userId,
             Pageable pageable,
             BiFunction<UUID, Pageable, Page<T>> fetchPageFn,
-            Function<T, Integer> extractTmdbIdFn,
+            Function<T, UUID> extractIdFn,
             Function<T, LocalDateTime> extractCreatedAtFn,
+            Function<T, Integer> extractTmdbIdFn,
             Function<T, BigDecimal> extractRatingValueFn
     ) {
         Page<T> page = fetchPageFn.apply(userId, pageable);
 
         return page.map(entity -> {
             ListItemDto dto = new ListItemDto();
+            dto.setId(extractIdFn.apply(entity));
             dto.setMovieTmdbId(extractTmdbIdFn.apply(entity));
             dto.setCreatedAt(extractCreatedAtFn.apply(entity));
 
@@ -103,8 +110,9 @@ public class UserContentService {
 
             try {
                 TmdbMovie movie = tmdbService.getTmdbMovie(dto.getMovieTmdbId());
+                dto.setMovieTmdbId(movie.getId());
                 dto.setTitle(movie.getTitle());
-                dto.setPosterUrl("https://image.tmdb.org/t/p/w500" + movie.getPosterPath());
+                dto.setPosterUrl(movie.getPosterPath());
                 dto.setReleaseDate(movie.getReleaseDate());
             } catch (Exception e) {
 //                 log.warn("Nie udało się pobrać filmu TMDB o ID {}", dto.getMovieTmdbId());
