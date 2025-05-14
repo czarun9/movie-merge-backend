@@ -19,10 +19,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import pl.wat.moviemergebackend.filters.JwtRequestFilter;
-import pl.wat.moviemergebackend.service.ApplicationUserDetailsService;
+import pl.wat.moviemergebackend.security.JwtRequestFilter;
+import pl.wat.moviemergebackend.user.service.ApplicationUserDetailsService;
 
 @Configuration
 @EnableMethodSecurity

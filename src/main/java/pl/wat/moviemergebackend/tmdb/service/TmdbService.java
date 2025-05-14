@@ -18,9 +18,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.yamj.api.common.http.SimpleHttpClientBuilder;
-import pl.wat.moviemergebackend.api.dto.ReviewDto;
+import pl.wat.moviemergebackend.movie.dto.ReviewDto;
 import pl.wat.moviemergebackend.tmdb.dto.GenresResponse;
 import pl.wat.moviemergebackend.tmdb.dto.TmdbMoviePageResponse;
+import pl.wat.moviemergebackend.tmdb.dto.TmdbMovieReviewDto;
 import pl.wat.moviemergebackend.tmdb.model.*;
 
 import java.util.List;

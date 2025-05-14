@@ -1,6 +1,6 @@
 package pl.wat.moviemergebackend.security;
 
-import pl.wat.moviemergebackend.entity.UserEntity;
+import pl.wat.moviemergebackend.user.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
