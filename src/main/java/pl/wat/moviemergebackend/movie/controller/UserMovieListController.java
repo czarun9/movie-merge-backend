@@ -10,14 +10,24 @@ import pl.wat.moviemergebackend.movie.dto.UserMovieListResponse;
 import pl.wat.moviemergebackend.movie.service.UserMovieListService;
 import pl.wat.moviemergebackend.security.UserPrincipal;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/user-lists")
+@RequestMapping("/api/v1/user/lists")
 @RequiredArgsConstructor
 public class UserMovieListController {
 
     private final UserMovieListService userMovieListService;
+
+    @GetMapping
+    public ResponseEntity<List<UserMovieListResponse>> getUserLists(
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        List<UserMovieListResponse> lists = userMovieListService.getUserLists(principal.getId());
+        return ResponseEntity.ok(lists);
+    }
+
 
     @PostMapping
     public ResponseEntity<UserMovieListResponse> createList(

@@ -14,6 +14,7 @@ import pl.wat.moviemergebackend.user.entity.UserEntity;
 import pl.wat.moviemergebackend.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -23,6 +24,14 @@ public class UserMovieListService {
 
     private final ListRepository listRepository;
     private final UserRepository userRepository;
+
+    public List<UserMovieListResponse> getUserLists(UUID userId) {
+        return listRepository.findAllByUserId(userId)
+                .stream()
+                .map(UserMovieListResponse::fromEntity)
+                .toList();
+    }
+
 
     public UserMovieListResponse createList(UUID userId, UserMovieListRequest request) {
         UserEntity user = userRepository.findById(userId)
@@ -34,7 +43,7 @@ public class UserMovieListService {
 
         listRepository.save(list);
 
-        return new UserMovieListResponse(list.getId(), list.getName());
+        return new UserMovieListResponse(list.getId(), list.getName(), list.getCreatedAt());
     }
 
     @Transactional
