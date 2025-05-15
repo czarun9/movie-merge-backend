@@ -9,6 +9,8 @@ import pl.wat.moviemergebackend.movie.dto.UserMovieListResponse;
 import pl.wat.moviemergebackend.movie.service.UserMovieListService;
 import pl.wat.moviemergebackend.security.UserPrincipal;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/user-lists")
 @RequiredArgsConstructor
@@ -24,4 +26,14 @@ public class UserMovieListController {
         UserMovieListResponse createdList = userMovieListService.createList(principal.getId(), request);
         return ResponseEntity.ok(createdList);
     }
+
+    @DeleteMapping("/{listId}")
+    public ResponseEntity<Void> deleteList(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable UUID listId
+    ) {
+        userMovieListService.deleteList(principal.getId(), listId);
+        return ResponseEntity.noContent().build();
+    }
+
 }
