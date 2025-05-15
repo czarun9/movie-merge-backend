@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import pl.wat.moviemergebackend.movie.dto.UserMovieListItemRequest;
 import pl.wat.moviemergebackend.movie.dto.UserMovieListRequest;
 import pl.wat.moviemergebackend.movie.dto.UserMovieListResponse;
 import pl.wat.moviemergebackend.movie.service.UserMovieListService;
@@ -35,5 +36,27 @@ public class UserMovieListController {
         userMovieListService.deleteList(principal.getId(), listId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{listId}/item")
+    public ResponseEntity<Void> addMovieToList(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable UUID listId,
+            @RequestBody UserMovieListItemRequest request
+    ) {
+        userMovieListService.addMovieToList(principal.getId(), listId, request.movieTmdbId());
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{listId}/item/{movieTmdbId}")
+    public ResponseEntity<Void> removeMovieFromList(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable UUID listId,
+            @PathVariable Integer movieTmdbId
+    ) {
+        userMovieListService.removeMovieFromList(principal.getId(), listId, movieTmdbId);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 }
