@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UserMovieListService {
+public class UserListsService {
 
     private final ListRepository listRepository;
     private final UserRepository userRepository;

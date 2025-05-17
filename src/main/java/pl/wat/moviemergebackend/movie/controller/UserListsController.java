@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.wat.moviemergebackend.movie.dto.UserMovieListItemRequest;
 import pl.wat.moviemergebackend.movie.dto.CreateListRequest;
 import pl.wat.moviemergebackend.movie.dto.GetListResponse;
-import pl.wat.moviemergebackend.movie.service.UserMovieListService;
+import pl.wat.moviemergebackend.movie.service.UserListsService;
 import pl.wat.moviemergebackend.security.UserPrincipal;
 
 import java.util.List;
@@ -16,15 +16,15 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/user/lists")
 @RequiredArgsConstructor
-public class UserMovieListController {
+public class UserListsController {
 
-    private final UserMovieListService userMovieListService;
+    private final UserListsService userListsService;
 
     @GetMapping
     public ResponseEntity<List<GetListResponse>> getUserLists(
             @AuthenticationPrincipal UserPrincipal principal
     ) {
-        List<GetListResponse> lists = userMovieListService.getUserLists(principal.getId());
+        List<GetListResponse> lists = userListsService.getUserLists(principal.getId());
         return ResponseEntity.ok(lists);
     }
 
@@ -33,7 +33,7 @@ public class UserMovieListController {
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable UUID listId
     ) {
-        GetListResponse list = userMovieListService.getUserList(listId, principal.getId());
+        GetListResponse list = userListsService.getUserList(listId, principal.getId());
         return ResponseEntity.ok(list);
     }
 
@@ -44,9 +44,9 @@ public class UserMovieListController {
     ) {
         GetListResponse createdList;
         if (request.initialMovieId() != null) {
-            createdList = userMovieListService.createListWithMovie(principal.getId(), request);
+            createdList = userListsService.createListWithMovie(principal.getId(), request);
         } else {
-            createdList = userMovieListService.createList(principal.getId(), request.name());
+            createdList = userListsService.createList(principal.getId(), request.name());
         }
         return ResponseEntity.ok(createdList);
     }
@@ -56,7 +56,7 @@ public class UserMovieListController {
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable UUID listId
     ) {
-        userMovieListService.deleteList(principal.getId(), listId);
+        userListsService.deleteList(principal.getId(), listId);
         return ResponseEntity.noContent().build();
     }
 
@@ -66,7 +66,7 @@ public class UserMovieListController {
             @PathVariable UUID listId,
             @RequestBody UserMovieListItemRequest request
     ) {
-        userMovieListService.addMovieToList(principal.getId(), listId, request.movieTmdbId());
+        userListsService.addMovieToList(principal.getId(), listId, request.movieTmdbId());
         return ResponseEntity.ok().build();
     }
 
@@ -76,7 +76,7 @@ public class UserMovieListController {
             @PathVariable UUID listId,
             @PathVariable Integer movieTmdbId
     ) {
-        userMovieListService.removeMovieFromList(principal.getId(), listId, movieTmdbId);
+        userListsService.removeMovieFromList(principal.getId(), listId, movieTmdbId);
         return ResponseEntity.noContent().build();
     }
 
