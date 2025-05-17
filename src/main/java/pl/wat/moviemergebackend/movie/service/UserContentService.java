@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import pl.wat.moviemergebackend.movie.dto.ListItemDto;
+import pl.wat.moviemergebackend.movie.dto.ListItem;
 import pl.wat.moviemergebackend.movie.entity.MovieFavouriteStatusEntity;
 import pl.wat.moviemergebackend.movie.entity.MovieRatingStatusEntity;
 import pl.wat.moviemergebackend.movie.entity.MovieWatchedStatusEntity;
@@ -32,7 +32,7 @@ public class UserContentService {
     private final ListItemRepository listItemRepository;
     private final TmdbService tmdbService;
 
-    public Page<ListItemDto> getUserFavorites(UUID userId, Pageable pageable) {
+    public Page<ListItem> getUserFavorites(UUID userId, Pageable pageable) {
         return getUserList(
                 userId,
                 pageable,
@@ -43,7 +43,7 @@ public class UserContentService {
         );
     }
 
-    public Page<ListItemDto> getUserWatchlist(UUID userId, Pageable pageable) {
+    public Page<ListItem> getUserWatchlist(UUID userId, Pageable pageable) {
         return getUserList(
                 userId,
                 pageable,
@@ -54,7 +54,7 @@ public class UserContentService {
         );
     }
 
-    public Page<ListItemDto> getUserWatched(UUID userId, Pageable pageable) {
+    public Page<ListItem> getUserWatched(UUID userId, Pageable pageable) {
         return getUserList(
                 userId,
                 pageable,
@@ -65,7 +65,7 @@ public class UserContentService {
         );
     }
 
-    public Page<ListItemDto> getUserRatings(UUID userId, Pageable pageable) {
+    public Page<ListItem> getUserRatings(UUID userId, Pageable pageable) {
         return getUserList(
                 userId,
                 pageable,
@@ -77,7 +77,7 @@ public class UserContentService {
         );
     }
 
-    public Page<ListItemDto> getUserMovieListItems(UUID userId, UUID listId, Pageable pageable) {
+    public Page<ListItem> getUserMovieListItems(UUID userId, UUID listId, Pageable pageable) {
         return getUserList(
                 userId,
                 pageable,
@@ -89,19 +89,19 @@ public class UserContentService {
     }
 
 
-    private <T> Page<ListItemDto> getUserList(
+    private <T> Page<ListItem> getUserList(
             UUID userId,
             Pageable pageable,
             BiFunction<UUID, Pageable, Page<T>> fetchPageFn,
             Function<T, UUID> extractIdFn,
             Function<T, LocalDateTime> extractCreatedAtFn,
             Function<T, Integer> extractTmdbIdFn
-            ) {
+    ) {
         return getUserList(userId, pageable, fetchPageFn, extractIdFn, extractCreatedAtFn, extractTmdbIdFn, null);
     }
 
 
-    private <T> Page<ListItemDto> getUserList(
+    private <T> Page<ListItem> getUserList(
             UUID userId,
             Pageable pageable,
             BiFunction<UUID, Pageable, Page<T>> fetchPageFn,
@@ -113,27 +113,33 @@ public class UserContentService {
         Page<T> page = fetchPageFn.apply(userId, pageable);
 
         return page.map(entity -> {
-            ListItemDto dto = new ListItemDto();
-            dto.setId(extractIdFn.apply(entity));
-            dto.setMovieTmdbId(extractTmdbIdFn.apply(entity));
-            dto.setCreatedAt(extractCreatedAtFn.apply(entity));
+            UUID id = extractIdFn.apply(entity);
+            Integer tmdbId = extractTmdbIdFn.apply(entity);
+            LocalDateTime createdAt = extractCreatedAtFn.apply(entity);
+            BigDecimal rating = extractRatingValueFn != null ? extractRatingValueFn.apply(entity) : null;
 
-            if (extractRatingValueFn != null) {
-                dto.setRating(extractRatingValueFn.apply(entity));
-            }
+            String title = null;
+            String posterUrl = null;
+            String releaseDate = null;
 
             try {
-                TmdbMovie movie = tmdbService.getTmdbMovie(dto.getMovieTmdbId());
-                dto.setMovieTmdbId(movie.getId());
-                dto.setTitle(movie.getTitle());
-                dto.setPosterUrl(movie.getPosterPath());
-                dto.setReleaseDate(movie.getReleaseDate());
+                TmdbMovie movie = tmdbService.getTmdbMovie(tmdbId);
+                title = movie.getTitle();
+                posterUrl = movie.getPosterPath();
+                releaseDate = movie.getReleaseDate();
             } catch (Exception e) {
-//                 log.warn("Nie udało się pobrać filmu TMDB o ID {}", dto.getMovieTmdbId());
+                // log.warn("Nie udało się pobrać filmu TMDB o ID {}", tmdbId);
             }
 
-
-            return dto;
+            return new ListItem(
+                    id,
+                    tmdbId,
+                    title,
+                    releaseDate,
+                    posterUrl,
+                    rating,
+                    createdAt
+            );
         });
     }
 

@@ -5,10 +5,10 @@ import pl.wat.moviemergebackend.movie.entity.UserMovieListEntity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record UserMovieListResponse(UUID id, String name, LocalDateTime createdAt) {
+public record GetListResponse(UUID id, String name, LocalDateTime createdAt) {
 
-    public static UserMovieListResponse fromEntity(UserMovieListEntity entity) {
-        return new UserMovieListResponse(
+    public static GetListResponse fromEntity(UserMovieListEntity entity) {
+        return new GetListResponse(
                 entity.getId(),
                 entity.getName(),
                 entity.getCreatedAt()

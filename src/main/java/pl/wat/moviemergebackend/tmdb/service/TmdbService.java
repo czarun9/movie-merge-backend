@@ -9,7 +9,6 @@ import com.omertron.themoviedbapi.model.Genre;
 import com.omertron.themoviedbapi.model.discover.Discover;
 import com.omertron.themoviedbapi.model.movie.MovieBasic;
 import com.omertron.themoviedbapi.model.movie.MovieInfo;
-import com.omertron.themoviedbapi.model.review.Review;
 import com.omertron.themoviedbapi.results.ResultList;
 import com.omertron.themoviedbapi.tools.HttpTools;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.yamj.api.common.http.SimpleHttpClientBuilder;
-import pl.wat.moviemergebackend.movie.dto.ReviewDto;
+import pl.wat.moviemergebackend.movie.dto.Review;
 import pl.wat.moviemergebackend.tmdb.dto.GenresResponse;
 import pl.wat.moviemergebackend.tmdb.dto.TmdbMoviePageResponse;
 import pl.wat.moviemergebackend.tmdb.dto.TmdbMovieReviewDto;
@@ -85,15 +84,15 @@ public class TmdbService {
     }
 
     public TmdbMovieReviewDto getTmdbMovieReviews(int movieId) throws MovieDbException {
-        ResultList<Review> resultList = tmdbMovies.getMovieReviews(movieId, 1, "en");
+        ResultList<com.omertron.themoviedbapi.model.review.Review> resultList = tmdbMovies.getMovieReviews(movieId, 1, "en");
 
-        List<ReviewDto> reviews = resultList.getResults().stream().map(review -> {
-            ReviewDto dto = new ReviewDto();
-            dto.setAuthor(review.getAuthor());
-            dto.setContent(review.getContent());
-            dto.setUrl(review.getUrl());
-            dto.setPlatform("tmdb");
-            return dto;
+        List<Review> reviews = resultList.getResults().stream().map(review -> {
+            var id = review.getId();
+            var author = review.getAuthor();
+            var content = review.getContent();
+            var url = review.getUrl();
+            var platform = "tmdb";
+            return new Review(id, author, content, url, platform);
         }).collect(Collectors.toList());
 
         TmdbMovieReviewDto dto = new TmdbMovieReviewDto();

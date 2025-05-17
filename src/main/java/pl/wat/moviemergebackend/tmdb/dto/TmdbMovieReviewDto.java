@@ -3,7 +3,7 @@ package pl.wat.moviemergebackend.tmdb.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.wat.moviemergebackend.movie.dto.ReviewDto;
+import pl.wat.moviemergebackend.movie.dto.Review;
 
 import java.util.List;
 
@@ -14,5 +14,5 @@ public class TmdbMovieReviewDto {
     private int totalPages;
     private int totalResults;
     private int page;
-    private List<ReviewDto> reviews;
+    private List<Review> reviews;
 }

@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import pl.wat.moviemergebackend.movie.dto.CreateListRequest;
-import pl.wat.moviemergebackend.movie.dto.UserMovieListResponse;
+import pl.wat.moviemergebackend.movie.dto.GetListResponse;
 import pl.wat.moviemergebackend.movie.entity.UserMovieListEntity;
 import pl.wat.moviemergebackend.movie.entity.UserMovieListItemEntity;
 import pl.wat.moviemergebackend.movie.repository.ListRepository;
@@ -25,20 +25,20 @@ public class UserMovieListService {
     private final ListRepository listRepository;
     private final UserRepository userRepository;
 
-    public List<UserMovieListResponse> getUserLists(UUID userId) {
+    public List<GetListResponse> getUserLists(UUID userId) {
         return listRepository.findAllByUserId(userId)
                 .stream()
-                .map(UserMovieListResponse::fromEntity)
+                .map(GetListResponse::fromEntity)
                 .toList();
     }
 
-    public UserMovieListResponse getUserList(UUID listId, UUID userId) {
+    public GetListResponse getUserList(UUID listId, UUID userId) {
         return listRepository.findByUserIdAndId(userId, listId)
-                .map(UserMovieListResponse::fromEntity)
+                .map(GetListResponse::fromEntity)
                 .orElseThrow(() -> new IllegalArgumentException("List not found"));
     }
 
-    public UserMovieListResponse createList(UUID userId, String listName) {
+    public GetListResponse createList(UUID userId, String listName) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
@@ -48,11 +48,11 @@ public class UserMovieListService {
 
         listRepository.save(list);
 
-        return new UserMovieListResponse(list.getId(), list.getName(), list.getCreatedAt());
+        return new GetListResponse(list.getId(), list.getName(), list.getCreatedAt());
     }
 
     @Transactional
-    public UserMovieListResponse createListWithMovie(UUID userId, CreateListRequest request) {
+    public GetListResponse createListWithMovie(UUID userId, CreateListRequest request) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
@@ -70,7 +70,7 @@ public class UserMovieListService {
 
         listRepository.save(list);
 
-        return new UserMovieListResponse(list.getId(), list.getName(), list.getCreatedAt());
+        return new GetListResponse(list.getId(), list.getName(), list.getCreatedAt());
     }
 
     @Transactional

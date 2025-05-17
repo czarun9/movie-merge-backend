@@ -4,8 +4,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.wat.moviemergebackend.movie.dto.MovieStatusDto;
-import pl.wat.moviemergebackend.movie.dto.RatingDto;
+import pl.wat.moviemergebackend.movie.dto.MovieStatus;
+import pl.wat.moviemergebackend.movie.dto.Rating;
 import pl.wat.moviemergebackend.movie.entity.MovieFavouriteStatusEntity;
 import pl.wat.moviemergebackend.movie.entity.MovieRatingStatusEntity;
 import pl.wat.moviemergebackend.movie.entity.MovieWatchedStatusEntity;
@@ -33,33 +33,21 @@ public class MovieStatusService {
     private final FavouriteRepository favouriteRepo;
     private final EntityManager entityManager;
 
-    public MovieStatusDto getMovieStatus(UUID userId, Integer tmdbId) {
+    public MovieStatus getMovieStatus(UUID userId, Integer tmdbId) {
         UserEntity user = entityManager.getReference(UserEntity.class, userId);
         boolean watched = watchedRepo.existsByUserAndMovieTmdbId(user, tmdbId);
         boolean inWatchlist = watchlistRepo.existsByUserAndMovieTmdbId(user, tmdbId);
         boolean favourite = favouriteRepo.existsByUserAndMovieTmdbId(user, tmdbId);
 
-        List<RatingDto> ratings = ratingRepo.findByUserIdAndMovieTmdbId(user.getId(), tmdbId)
+        List<Rating> ratings = ratingRepo.findByUserIdAndMovieTmdbId(user.getId(), tmdbId)
                 .stream()
-                .map(r -> {
-                    RatingDto dto = new RatingDto();
-                    dto.setValue(r.getRatingValue());
-                    dto.setRatedAt(r.getCreatedAt());
-                    return dto;
-                })
-                .sorted(Comparator.comparing(RatingDto::getRatedAt))
+                .map(r -> new Rating(r.getRatingValue(), r.getCreatedAt()))
+                .sorted(Comparator.comparing(Rating::ratedAt))
                 .collect(Collectors.toList());
 
-        BigDecimal latest = ratings.isEmpty() ? null : ratings.get(ratings.size() - 1).getValue();
+        BigDecimal latest = ratings.isEmpty() ? null : ratings.get(ratings.size() - 1).value();
 
-        MovieStatusDto dto = new MovieStatusDto();
-        dto.setWatched(watched);
-        dto.setInWatchlist(inWatchlist);
-        dto.setFavourite(favourite);
-        dto.setRatings(ratings);
-        dto.setLatestRating(latest);
-
-        return dto;
+        return new MovieStatus(watched, inWatchlist, favourite, ratings, latest);
     }
 
     @Transactional
@@ -119,8 +107,6 @@ public class MovieStatusService {
 
         ratingRepo.save(ratingEntity);
     }
-
-
 
 
 }

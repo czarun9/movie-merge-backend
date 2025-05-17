@@ -6,7 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import pl.wat.moviemergebackend.movie.dto.UserMovieListItemRequest;
 import pl.wat.moviemergebackend.movie.dto.CreateListRequest;
-import pl.wat.moviemergebackend.movie.dto.UserMovieListResponse;
+import pl.wat.moviemergebackend.movie.dto.GetListResponse;
 import pl.wat.moviemergebackend.movie.service.UserMovieListService;
 import pl.wat.moviemergebackend.security.UserPrincipal;
 
@@ -21,28 +21,28 @@ public class UserMovieListController {
     private final UserMovieListService userMovieListService;
 
     @GetMapping
-    public ResponseEntity<List<UserMovieListResponse>> getUserLists(
+    public ResponseEntity<List<GetListResponse>> getUserLists(
             @AuthenticationPrincipal UserPrincipal principal
     ) {
-        List<UserMovieListResponse> lists = userMovieListService.getUserLists(principal.getId());
+        List<GetListResponse> lists = userMovieListService.getUserLists(principal.getId());
         return ResponseEntity.ok(lists);
     }
 
     @GetMapping("/{listId}")
-    public ResponseEntity<UserMovieListResponse> getUserList(
+    public ResponseEntity<GetListResponse> getUserList(
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable UUID listId
     ) {
-        UserMovieListResponse list = userMovieListService.getUserList(listId, principal.getId());
+        GetListResponse list = userMovieListService.getUserList(listId, principal.getId());
         return ResponseEntity.ok(list);
     }
 
     @PostMapping
-    public ResponseEntity<UserMovieListResponse> createList(
+    public ResponseEntity<GetListResponse> createList(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestBody CreateListRequest request
     ) {
-        UserMovieListResponse createdList;
+        GetListResponse createdList;
         if (request.initialMovieId() != null) {
             createdList = userMovieListService.createListWithMovie(principal.getId(), request);
         } else {

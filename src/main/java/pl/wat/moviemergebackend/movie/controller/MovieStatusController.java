@@ -5,10 +5,10 @@ import org.apache.commons.lang3.function.TriConsumer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import pl.wat.moviemergebackend.movie.dto.ChangeStatusDto;
-import pl.wat.moviemergebackend.movie.dto.RatingDto;
+import pl.wat.moviemergebackend.movie.dto.ChangeStatus;
+import pl.wat.moviemergebackend.movie.dto.Rating;
 import pl.wat.moviemergebackend.security.UserPrincipal;
-import pl.wat.moviemergebackend.movie.dto.MovieStatusDto;
+import pl.wat.moviemergebackend.movie.dto.MovieStatus;
 import pl.wat.moviemergebackend.movie.service.MovieStatusService;
 
 import java.util.UUID;
@@ -21,40 +21,40 @@ public class MovieStatusController {
     private final MovieStatusService movieStatusService;
 
     @GetMapping("/{tmdbId}/status")
-    public ResponseEntity<MovieStatusDto> getMovieStatus(
+    public ResponseEntity<MovieStatus> getMovieStatus(
             @PathVariable Integer tmdbId,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         UUID userId = principal.getId();
-        MovieStatusDto status = movieStatusService.getMovieStatus(userId, tmdbId);
+        MovieStatus status = movieStatusService.getMovieStatus(userId, tmdbId);
         return ResponseEntity.ok(status);
     }
 
     @PatchMapping("/{tmdbId}/favourite")
     public ResponseEntity<Void> setFavouriteStatus(
             @PathVariable Integer tmdbId,
-            @RequestBody ChangeStatusDto request,
+            @RequestBody ChangeStatus request,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return handleStatusChange(principal.getId(), tmdbId, request.isStatus(), movieStatusService::setFavoriteStatus);
+        return handleStatusChange(principal.getId(), tmdbId, request.status(), movieStatusService::setFavoriteStatus);
     }
 
     @PatchMapping("/{tmdbId}/watched")
     public ResponseEntity<Void> setWatchedStatus(
             @PathVariable Integer tmdbId,
-            @RequestBody ChangeStatusDto request,
+            @RequestBody ChangeStatus request,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return handleStatusChange(principal.getId(), tmdbId, request.isStatus(), movieStatusService::setWatchedStatus);
+        return handleStatusChange(principal.getId(), tmdbId, request.status(), movieStatusService::setWatchedStatus);
     }
 
     @PatchMapping("/{tmdbId}/watchlist")
     public ResponseEntity<Void> setAddedToWatchlistStatus(
             @PathVariable Integer tmdbId,
-            @RequestBody ChangeStatusDto request,
+            @RequestBody ChangeStatus request,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
-        return handleStatusChange(principal.getId(), tmdbId, request.isStatus(), movieStatusService::setAddedToWatchlistStatus);
+        return handleStatusChange(principal.getId(), tmdbId, request.status(), movieStatusService::setAddedToWatchlistStatus);
     }
 
     private ResponseEntity<Void> handleStatusChange(
@@ -70,11 +70,11 @@ public class MovieStatusController {
     @PostMapping("/{tmdbId}/rating")
     public ResponseEntity<Void> setRating(
             @PathVariable Integer tmdbId,
-            @RequestBody RatingDto request,
+            @RequestBody Rating request,
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         UUID userId = principal.getId();
-        movieStatusService.setRating(userId, tmdbId, request.getValue());
+        movieStatusService.setRating(userId, tmdbId, request.value());
         return ResponseEntity.ok().build();
     }
 

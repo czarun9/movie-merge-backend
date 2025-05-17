@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import pl.wat.moviemergebackend.movie.dto.ListItemDto;
+import pl.wat.moviemergebackend.movie.dto.ListItem;
 import pl.wat.moviemergebackend.security.UserPrincipal;
 import pl.wat.moviemergebackend.movie.service.UserContentService;
 
@@ -21,7 +21,7 @@ public class UserContentController {
     private final UserContentService userContentService;
 
     @GetMapping("/favorites")
-    public Page<ListItemDto> getFavorites(
+    public Page<ListItem> getFavorites(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -31,7 +31,7 @@ public class UserContentController {
     }
 
     @GetMapping("/watchlist")
-    public Page<ListItemDto> getWatchlist(
+    public Page<ListItem> getWatchlist(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -41,7 +41,7 @@ public class UserContentController {
     }
 
     @GetMapping("/ratings")
-    public Page<ListItemDto> getRatings(
+    public Page<ListItem> getRatings(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -51,7 +51,7 @@ public class UserContentController {
     }
 
     @GetMapping("/watched")
-    public Page<ListItemDto> getWatched(
+    public Page<ListItem> getWatched(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -61,14 +61,14 @@ public class UserContentController {
     }
 
     @GetMapping("/lists/{listId}/items")
-    public ResponseEntity<Page<ListItemDto>> getListItems(
+    public ResponseEntity<Page<ListItem>> getListItems(
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable UUID listId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ListItemDto> itemsPage = userContentService.getUserMovieListItems(principal.getId(), listId, pageable);
+        Page<ListItem> itemsPage = userContentService.getUserMovieListItems(principal.getId(), listId, pageable);
         return ResponseEntity.ok(itemsPage);
     }
 
