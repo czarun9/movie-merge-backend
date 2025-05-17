@@ -16,7 +16,6 @@ public class UserPrincipal implements UserDetails {
         return userEntity.getId();
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

@@ -25,7 +25,7 @@ class LoginController {
     public AuthenticationResponse login(@RequestBody AuthenticationRequest req) throws Exception {
         UserEntity user;
         try {
-            user = userDetailsService.authenticate(req.getEmail(), req.getPassword());
+            user = userDetailsService.authenticate(req.email(), req.password());
         } catch (BadCredentialsException e) {
             throw new Exception("Incorrect username or password", e);
         }
