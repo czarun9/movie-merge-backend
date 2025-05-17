@@ -2,7 +2,7 @@ package pl.wat.moviemergebackend.user.controller;
 
 import org.springframework.http.ResponseEntity;
 import pl.wat.moviemergebackend.exception.EmailAlreadyTakenException;
-import pl.wat.moviemergebackend.user.dto.UserDto;
+import pl.wat.moviemergebackend.user.dto.User;
 import pl.wat.moviemergebackend.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,12 +18,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/api/v1/users")
-    public Iterable<UserDto> getUsers() {
+    public Iterable<User> getUsers() {
         return userService.findAllUsers();
     }
 
     @GetMapping("/api/v1/users/{id}")
-    public UserDto getUserById(@PathVariable("id") UUID id) {
+    public User getUserById(@PathVariable("id") UUID id) {
         return userService.findUserById(id);
     }
 
@@ -35,13 +35,13 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto postUser(@Valid @RequestBody UserDto userDto) throws NoSuchAlgorithmException {
-        return userService.createUser(userDto, userDto.getPassword());
+    public User postUser(@Valid @RequestBody User user) throws NoSuchAlgorithmException {
+        return userService.createUser(user, user.password());
     }
 
     @PutMapping("/api/v1/users/{id}")
-    public void putUser(@PathVariable("id") UUID id, @Valid @RequestBody UserDto userDto) throws NoSuchAlgorithmException {
-        userService.updateUser(id, userDto, userDto.getPassword());
+    public void putUser(@PathVariable("id") UUID id, @Valid @RequestBody User user) throws NoSuchAlgorithmException {
+        userService.updateUser(id, user, user.password());
     }
 
     @ExceptionHandler(EmailAlreadyTakenException.class)

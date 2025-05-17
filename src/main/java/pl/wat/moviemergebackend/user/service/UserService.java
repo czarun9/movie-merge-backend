@@ -2,7 +2,7 @@ package pl.wat.moviemergebackend.user.service;
 
 import pl.wat.moviemergebackend.exception.EmailAlreadyTakenException;
 import pl.wat.moviemergebackend.exception.NotFoundException;
-import pl.wat.moviemergebackend.user.dto.UserDto;
+import pl.wat.moviemergebackend.user.dto.User;
 import pl.wat.moviemergebackend.user.entity.UserEntity;
 import pl.wat.moviemergebackend.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -29,55 +29,55 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public List<UserDto> findAllUsers() {
+    public List<User> findAllUsers() {
         var userEntityList = new ArrayList<>(userRepository.findAll());
         return userEntityList
                 .stream()
-                .map(this::convertToDto)
+                .map(entity -> mapper.convertValue(entity, User.class))
                 .collect(Collectors.toList());
     }
 
-    public UserDto findUserById(final UUID id) {
+    public User findUserById(final UUID id) {
         var user = userRepository
                 .findById(id)
                 .orElseThrow(
                         () -> new NotFoundException("User by id " + id + " was not found")
                 );
-        return convertToDto(user);
+        return mapper.convertValue(user, User.class);
     }
 
-    public UserDto createUser(UserDto userDto, String password) throws NoSuchAlgorithmException {
-        UserEntity user = convertToEntity(userDto);
+    public User createUser(User user, String password) throws NoSuchAlgorithmException {
+        UserEntity userEntity = convertToEntity(user);
         if (password.isBlank())
             throw new IllegalArgumentException("Password is required.");
 
-        boolean existsEmail = userRepository.selectExistsEmail(user.getEmail());
+        boolean existsEmail = userRepository.selectExistsEmail(userEntity.getEmail());
         if (existsEmail) throw new EmailAlreadyTakenException(
-                "Email " + user.getEmail() + " jest zajęty.");
+                "Email " + userEntity.getEmail() + " jest zajęty.");
 
         byte[] salt = createSalt();
         byte[] hashedPassword = createPasswordHash(password, salt);
 
-        user.setStoredSalt(salt);
-        user.setStoredHash(hashedPassword);
+        userEntity.setStoredSalt(salt);
+        userEntity.setStoredHash(hashedPassword);
 
-        userRepository.save(user);
-        return convertToDto(user);
+        userRepository.save(userEntity);
+        return mapper.convertValue(userEntity, User.class);
     }
 
-    public void updateUser(UUID id, UserDto userDto, String password) throws NoSuchAlgorithmException {
-        UserEntity user = findOrThrow(id);
-        UserEntity userParam = convertToEntity(userDto);
-        user.setEmail(userParam.getEmail());
+    public void updateUser(UUID id, User user, String password) throws NoSuchAlgorithmException {
+        UserEntity userEntity = findOrThrow(id);
+        UserEntity userParam = convertToEntity(user);
+        userEntity.setEmail(userParam.getEmail());
 
         if (!password.isBlank()) {
             byte[] salt = createSalt();
             byte[] hashedPassword = createPasswordHash(password, salt);
 
-            user.setStoredSalt(salt);
-            user.setStoredHash(hashedPassword);
+            userEntity.setStoredSalt(salt);
+            userEntity.setStoredHash(hashedPassword);
         }
-        userRepository.save(user);
+        userRepository.save(userEntity);
     }
 
     public void removeUserById(UUID id) {
@@ -98,11 +98,7 @@ public class UserService {
         return md.digest(password.getBytes(StandardCharsets.UTF_8));
     }
 
-    private UserDto convertToDto(UserEntity entity) {
-        return mapper.convertValue(entity, UserDto.class);
-    }
-
-    private UserEntity convertToEntity(UserDto dto) {
+    private UserEntity convertToEntity(User dto) {
         return mapper.convertValue(dto, UserEntity.class);
     }
 
