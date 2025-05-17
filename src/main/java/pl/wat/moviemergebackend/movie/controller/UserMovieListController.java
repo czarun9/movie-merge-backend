@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import pl.wat.moviemergebackend.movie.dto.UserMovieListItemRequest;
-import pl.wat.moviemergebackend.movie.dto.UserMovieListRequest;
+import pl.wat.moviemergebackend.movie.dto.CreateListRequest;
 import pl.wat.moviemergebackend.movie.dto.UserMovieListResponse;
 import pl.wat.moviemergebackend.movie.service.UserMovieListService;
 import pl.wat.moviemergebackend.security.UserPrincipal;
@@ -40,9 +40,14 @@ public class UserMovieListController {
     @PostMapping
     public ResponseEntity<UserMovieListResponse> createList(
             @AuthenticationPrincipal UserPrincipal principal,
-            @RequestBody UserMovieListRequest request
+            @RequestBody CreateListRequest request
     ) {
-        UserMovieListResponse createdList = userMovieListService.createList(principal.getId(), request);
+        UserMovieListResponse createdList;
+        if (request.initialMovieId() != null) {
+            createdList = userMovieListService.createListWithMovie(principal.getId(), request);
+        } else {
+            createdList = userMovieListService.createList(principal.getId(), request.name());
+        }
         return ResponseEntity.ok(createdList);
     }
 

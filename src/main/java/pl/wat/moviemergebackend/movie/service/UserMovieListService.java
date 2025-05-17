@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import pl.wat.moviemergebackend.movie.dto.UserMovieListRequest;
+import pl.wat.moviemergebackend.movie.dto.CreateListRequest;
 import pl.wat.moviemergebackend.movie.dto.UserMovieListResponse;
 import pl.wat.moviemergebackend.movie.entity.UserMovieListEntity;
 import pl.wat.moviemergebackend.movie.entity.UserMovieListItemEntity;
@@ -38,13 +38,35 @@ public class UserMovieListService {
                 .orElseThrow(() -> new IllegalArgumentException("List not found"));
     }
 
-    public UserMovieListResponse createList(UUID userId, UserMovieListRequest request) {
+    public UserMovieListResponse createList(UUID userId, String listName) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        UserMovieListEntity list = new UserMovieListEntity();
+        list.setName(listName);
+        list.setUser(user);
+
+        listRepository.save(list);
+
+        return new UserMovieListResponse(list.getId(), list.getName(), list.getCreatedAt());
+    }
+
+    @Transactional
+    public UserMovieListResponse createListWithMovie(UUID userId, CreateListRequest request) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         UserMovieListEntity list = new UserMovieListEntity();
         list.setName(request.name());
         list.setUser(user);
+
+        UserMovieListItemEntity item = new UserMovieListItemEntity();
+        item.setMovieTmdbId(request.initialMovieId());
+        item.setUser(user);
+        item.setList(list);
+        item.setCreatedAt(LocalDateTime.now());
+
+        list.getItems().add(item);
 
         listRepository.save(list);
 

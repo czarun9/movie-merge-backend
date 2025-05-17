@@ -6,6 +6,7 @@ import lombok.Setter;
 import pl.wat.moviemergebackend.user.entity.UserEntity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class UserMovieListEntity {
     private UserEntity user;
 
     @OneToMany(mappedBy = "list", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserMovieListItemEntity> items;
+    private List<UserMovieListItemEntity> items = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
