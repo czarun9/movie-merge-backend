@@ -10,10 +10,8 @@ import pl.wat.moviemergebackend.movie.entity.MovieFavouriteStatusEntity;
 import pl.wat.moviemergebackend.movie.entity.MovieRatingStatusEntity;
 import pl.wat.moviemergebackend.movie.entity.MovieWatchedStatusEntity;
 import pl.wat.moviemergebackend.movie.entity.MovieWatchlistStatusEntity;
-import pl.wat.moviemergebackend.movie.repository.FavouriteRepository;
-import pl.wat.moviemergebackend.movie.repository.MovieRatingRepository;
-import pl.wat.moviemergebackend.movie.repository.WatchedMovieRepository;
-import pl.wat.moviemergebackend.movie.repository.WatchlistEntryRepository;
+import pl.wat.moviemergebackend.movie.entity.UserMovieListItemEntity;
+import pl.wat.moviemergebackend.movie.repository.*;
 import pl.wat.moviemergebackend.tmdb.model.TmdbMovie;
 import pl.wat.moviemergebackend.tmdb.service.TmdbService;
 
@@ -31,6 +29,7 @@ public class UserContentService {
     private final WatchlistEntryRepository watchlistEntryRepository;
     private final MovieRatingRepository ratingRepository;
     private final WatchedMovieRepository watchedMovieRepository;
+    private final ListItemRepository listItemRepository;
     private final TmdbService tmdbService;
 
     public Page<ListItemDto> getUserFavorites(UUID userId, Pageable pageable) {
@@ -75,6 +74,17 @@ public class UserContentService {
                 MovieRatingStatusEntity::getCreatedAt,
                 MovieRatingStatusEntity::getMovieTmdbId,
                 MovieRatingStatusEntity::getRatingValue
+        );
+    }
+
+    public Page<ListItemDto> getUserMovieListItems(UUID userId, UUID listId, Pageable pageable) {
+        return getUserList(
+                userId,
+                pageable,
+                (uId, pg) -> listItemRepository.findByUser_IdAndList_IdOrderByCreatedAtDesc(uId, listId, pg),
+                UserMovieListItemEntity::getId,
+                UserMovieListItemEntity::getCreatedAt,
+                UserMovieListItemEntity::getMovieTmdbId
         );
     }
 

@@ -32,6 +32,11 @@ public class UserMovieListService {
                 .toList();
     }
 
+    public UserMovieListResponse getUserList(UUID listId, UUID userId) {
+        return listRepository.findByUserIdAndId(userId, listId)
+                .map(UserMovieListResponse::fromEntity)
+                .orElseThrow(() -> new IllegalArgumentException("List not found"));
+    }
 
     public UserMovieListResponse createList(UUID userId, UserMovieListRequest request) {
         UserEntity user = userRepository.findById(userId)
@@ -100,7 +105,5 @@ public class UserMovieListService {
 
         list.getItems().remove(itemToRemove);
     }
-
-
 }
 

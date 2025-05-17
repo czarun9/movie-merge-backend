@@ -28,6 +28,14 @@ public class UserMovieListController {
         return ResponseEntity.ok(lists);
     }
 
+    @GetMapping("/{listId}")
+    public ResponseEntity<UserMovieListResponse> getUserList(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable UUID listId
+    ) {
+        UserMovieListResponse list = userMovieListService.getUserList(listId, principal.getId());
+        return ResponseEntity.ok(list);
+    }
 
     @PostMapping
     public ResponseEntity<UserMovieListResponse> createList(
@@ -66,7 +74,6 @@ public class UserMovieListController {
         userMovieListService.removeMovieFromList(principal.getId(), listId, movieTmdbId);
         return ResponseEntity.noContent().build();
     }
-
 
 
 }
