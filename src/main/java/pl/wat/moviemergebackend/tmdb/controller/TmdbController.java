@@ -5,11 +5,11 @@ import com.omertron.themoviedbapi.MovieDbException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.wat.moviemergebackend.tmdb.dto.GenresResponse;
-import pl.wat.moviemergebackend.tmdb.dto.TmdbMoviePageResponse;
+import pl.wat.moviemergebackend.tmdb.dto.Genres;
+import pl.wat.moviemergebackend.tmdb.dto.TmdbMoviesPage;
 import pl.wat.moviemergebackend.tmdb.model.DiscoverSearchFilters;
 import pl.wat.moviemergebackend.tmdb.model.TmdbMovie;
-import pl.wat.moviemergebackend.tmdb.dto.TmdbMovieReviewDto;
+import pl.wat.moviemergebackend.tmdb.dto.TmdbReview;
 import pl.wat.moviemergebackend.tmdb.service.TmdbService;
 
 @AllArgsConstructor
@@ -31,9 +31,9 @@ public class TmdbController {
 
 
     @GetMapping("/discover")
-    public ResponseEntity<TmdbMoviePageResponse> getDiscoverTmdbMovies(DiscoverSearchFilters filters) {
+    public ResponseEntity<TmdbMoviesPage> getDiscoverTmdbMovies(DiscoverSearchFilters filters) {
         try {
-            TmdbMoviePageResponse response = tmdbService.getDiscoverTmdbMovies(filters);
+            TmdbMoviesPage response = tmdbService.getDiscoverTmdbMovies(filters);
             return ResponseEntity.ok(response);
         } catch (MovieDbException | JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -42,9 +42,9 @@ public class TmdbController {
 
 
     @GetMapping("/genres")
-    public ResponseEntity<GenresResponse> getGenres() {
+    public ResponseEntity<Genres> getGenres() {
         try {
-            GenresResponse response = tmdbService.getGenres();
+            Genres response = tmdbService.getGenres();
             return ResponseEntity.ok(response);
         } catch (MovieDbException e) {
             throw new RuntimeException(e);
@@ -52,9 +52,9 @@ public class TmdbController {
     }
 
     @GetMapping("/movies/{movieId}/reviews")
-    public ResponseEntity<TmdbMovieReviewDto> getTmdbMovieReviews(@PathVariable int movieId){
+    public ResponseEntity<TmdbReview> getTmdbMovieReviews(@PathVariable int movieId){
         try {
-            TmdbMovieReviewDto response = tmdbService.getTmdbMovieReviews(movieId);
+            TmdbReview response = tmdbService.getTmdbReviewsByMovie(movieId);
             return ResponseEntity.ok(response);
         } catch (MovieDbException e) {
             throw new RuntimeException(e);

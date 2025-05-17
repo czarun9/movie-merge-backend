@@ -18,9 +18,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.yamj.api.common.http.SimpleHttpClientBuilder;
 import pl.wat.moviemergebackend.movie.dto.Review;
-import pl.wat.moviemergebackend.tmdb.dto.GenresResponse;
-import pl.wat.moviemergebackend.tmdb.dto.TmdbMoviePageResponse;
-import pl.wat.moviemergebackend.tmdb.dto.TmdbMovieReviewDto;
+import pl.wat.moviemergebackend.tmdb.dto.Genres;
+import pl.wat.moviemergebackend.tmdb.dto.TmdbMoviesPage;
+import pl.wat.moviemergebackend.tmdb.dto.TmdbReview;
 import pl.wat.moviemergebackend.tmdb.model.*;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class TmdbService {
         return objectMapper.convertValue(movieInfo, TmdbMovie.class);
     }
 
-    public TmdbMoviePageResponse getDiscoverTmdbMovies(DiscoverSearchFilters filters) throws MovieDbException, JsonProcessingException {
+    public TmdbMoviesPage getDiscoverTmdbMovies(DiscoverSearchFilters filters) throws MovieDbException, JsonProcessingException {
         Discover discover = new Discover()
                 .page(filters.getPage())
                 .voteCountGte(300)
@@ -57,7 +57,7 @@ public class TmdbService {
         return executeDiscover(filteredDiscover);
     }
 
-    private TmdbMoviePageResponse executeDiscover(Discover discover) throws MovieDbException {
+    private TmdbMoviesPage executeDiscover(Discover discover) throws MovieDbException {
         ResultList<MovieBasic> resultList = theMovieDbApi.getDiscoverMovies(discover);
 
         List<MovieBasic> movies = resultList.getResults();
@@ -69,7 +69,7 @@ public class TmdbService {
                         .constructCollectionType(List.class, TmdbMovieDiscover.class)
         );
 
-        return new TmdbMoviePageResponse(convertedMovies, totalPages);
+        return new TmdbMoviesPage(convertedMovies, totalPages);
     }
 
     private Discover applyFilters(Discover discover, DiscoverSearchFilters filters) {
@@ -78,12 +78,12 @@ public class TmdbService {
         return discover;
     }
 
-    public GenresResponse getGenres() throws MovieDbException {
+    public Genres getGenres() throws MovieDbException {
         ResultList<Genre> resultList = theMovieDbApi.getGenreMovieList("pl");
-        return new GenresResponse(resultList.getResults());
+        return new Genres(resultList.getResults());
     }
 
-    public TmdbMovieReviewDto getTmdbMovieReviews(int movieId) throws MovieDbException {
+    public TmdbReview getTmdbReviewsByMovie(int movieId) throws MovieDbException {
         ResultList<com.omertron.themoviedbapi.model.review.Review> resultList = tmdbMovies.getMovieReviews(movieId, 1, "en");
 
         List<Review> reviews = resultList.getResults().stream().map(review -> {
@@ -95,14 +95,14 @@ public class TmdbService {
             return new Review(id, author, content, url, platform);
         }).collect(Collectors.toList());
 
-        TmdbMovieReviewDto dto = new TmdbMovieReviewDto();
-        dto.setPage(resultList.getPage());
-        dto.setTotalPages(resultList.getTotalPages());
-        dto.setTotalResults(resultList.getTotalResults());
-        dto.setReviews(reviews);
-
-        return dto;
+        return new TmdbReview(
+                resultList.getPage(),
+                resultList.getTotalPages(),
+                resultList.getTotalResults(),
+                reviews
+        );
     }
+
 
 
 }
