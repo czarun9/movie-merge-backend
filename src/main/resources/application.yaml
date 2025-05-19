@@ -29,3 +29,8 @@ themoviedb:
 omdb:
   api:
     key: d574701a
+
+trakt:
+  api:
+    client_id: ${TRAKT_CLIENT_ID}
+    client_secret: ${TRAKT_CLIENT_SECRET}
