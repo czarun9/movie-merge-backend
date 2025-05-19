@@ -43,6 +43,7 @@ dependencies {
     implementation "com.github.Omertron:api-themoviedb:themoviedbapi-4.3"
     implementation "com.github.Omertron:api-omdb:API-OMDB-1.7"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    implementation 'com.uwetrottmann.trakt5:trakt-java:6.16.0'
 }
 
 tasks.named('test') {
