@@ -22,7 +22,8 @@ public record TraktMovie(
         Double rating,
         Integer votes,
         String updatedAt,
-        List<String> availableTranslations
+        List<String> availableTranslations,
+        List<TraktComment> comments
 ) {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record TraktIds(
@@ -32,7 +33,7 @@ public record TraktMovie(
             Integer tmdb
     ) {}
 
-    public static TraktMovie from(Movie movie) {
+    public static TraktMovie from(Movie movie, List<TraktComment> comments) {
         TraktIds ids = null;
         if (movie.ids != null) {
             ids = new TraktIds(
@@ -59,7 +60,8 @@ public record TraktMovie(
                 movie.rating,
                 movie.votes,
                 movie.updated_at != null ? movie.updated_at.toString() : null,
-                movie.available_translations
+                movie.available_translations,
+                comments
         );
     }
 }
